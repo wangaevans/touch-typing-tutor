@@ -19,6 +19,7 @@ export interface Settings {
   showKeyLabels: boolean;
   keyboardLayout: "qwerty" | "dvorak" | "colemak";
   visualFeedback: "subtle" | "normal" | "intense";
+  showStatsCards: boolean;
 }
 
 export interface Stats {

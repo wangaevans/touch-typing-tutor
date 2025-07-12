@@ -19,6 +19,7 @@ import { ProgressBar } from "@/components/ui/progress-bar";
 import { PracticeMode } from "@/components/modes/practice-mode";
 import { TestMode } from "@/components/modes/test-mode";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { Settings, BarChart3, Eye, EyeOff } from "lucide-react";
 
 const EnhancedTypingTrainer = () => {
   const { setTheme, theme } = useTheme();
@@ -37,11 +38,12 @@ const EnhancedTypingTrainer = () => {
     showKeyLabels: true,
     keyboardLayout: "qwerty",
     visualFeedback: "normal",
+    showStatsCards: true,
   });
 
   const [stats, setStats] = useState<Stats>({
     wpm: 0,
-    accuracy: 100,
+    accuracy: 0,
     errors: 0,
     timeElapsed: 0,
     charactersTyped: 0,
@@ -61,6 +63,8 @@ const EnhancedTypingTrainer = () => {
     null
   );
   const [isPracticeTyping, setIsPracticeTyping] = useState(false);
+  const [isTimedTest, setIsTimedTest] = useState(false);
+  const [testDuration, setTestDuration] = useState(10); // Default 10 seconds
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const practiceTextareaRef = useRef<HTMLTextAreaElement>(null);
@@ -85,7 +89,43 @@ const EnhancedTypingTrainer = () => {
     setIsTyping(false);
     setStats({
       wpm: 0,
-      accuracy: 100,
+      accuracy: 0,
+      errors: 0,
+      timeElapsed: 0,
+      charactersTyped: 0,
+      correctChars: 0,
+      incorrectChars: 0,
+    });
+  }, []);
+
+  const retryTest = useCallback(() => {
+    // Keep the same test text but reset everything else
+    setCurrentInput("");
+    setCurrentCharIndex(0);
+    setIncorrectChars(new Set());
+    setStartTime(null);
+    setIsTyping(false);
+    setStats({
+      wpm: 0,
+      accuracy: 0,
+      errors: 0,
+      timeElapsed: 0,
+      charactersTyped: 0,
+      correctChars: 0,
+      incorrectChars: 0,
+    });
+  }, []);
+
+  const initializeTimedTest = useCallback(() => {
+    setTestText(""); // For timed tests, we'll generate text dynamically
+    setCurrentInput("");
+    setCurrentCharIndex(0);
+    setIncorrectChars(new Set());
+    setStartTime(null);
+    setIsTyping(false);
+    setStats({
+      wpm: 0,
+      accuracy: 0,
       errors: 0,
       timeElapsed: 0,
       charactersTyped: 0,
@@ -100,7 +140,7 @@ const EnhancedTypingTrainer = () => {
     setIsPracticeTyping(false);
     setStats({
       wpm: 0,
-      accuracy: 100,
+      accuracy: 0,
       errors: 0,
       timeElapsed: 0,
       charactersTyped: 0,
@@ -113,16 +153,27 @@ const EnhancedTypingTrainer = () => {
     if (!startTime) return;
 
     const timeElapsed = (Date.now() - startTime) / 1000;
+
+    // Stop counting if test is complete (timed test time up or text completed)
+    if (
+      (isTimedTest && timeElapsed >= testDuration) ||
+      (!isTyping && currentInput.length >= testText.length)
+    ) {
+      return;
+    }
+
     const charactersTyped = currentInput.length;
     const correctChars = currentInput
       .split("")
       .filter((char, index) => char === testText[index]).length;
     const incorrectChars = charactersTyped - correctChars;
     const wpm = Math.round(correctChars / 5 / (timeElapsed / 60));
+
+    // Fix accuracy calculation - should be 0% when no typing has occurred
     const accuracy =
       charactersTyped > 0
-        ? Math.round((correctChars / charactersTyped) * 100)
-        : 100;
+        ? Math.min(100, Math.round((correctChars / charactersTyped) * 100))
+        : 0;
 
     setStats({
       wpm: wpm || 0,
@@ -133,7 +184,7 @@ const EnhancedTypingTrainer = () => {
       correctChars,
       incorrectChars,
     });
-  }, [currentInput, testText, startTime]);
+  }, [currentInput, testText, startTime, isTimedTest, testDuration, isTyping]);
 
   const calculatePracticeStats = useCallback(() => {
     if (!practiceStartTime) return;
@@ -141,7 +192,7 @@ const EnhancedTypingTrainer = () => {
     const timeElapsed = (Date.now() - practiceStartTime) / 1000;
     const charactersTyped = practiceInput.length;
     const wpm = Math.round(charactersTyped / 5 / (timeElapsed / 60));
-    const accuracy = 100; // In practice mode, all characters are considered correct
+    const accuracy = charactersTyped > 0 ? 100 : 0; // In practice mode, all characters are considered correct
 
     setStats({
       wpm: wpm || 0,
@@ -172,11 +223,48 @@ const EnhancedTypingTrainer = () => {
     }
     setIncorrectChars(newIncorrectChars);
 
-    // Complete test
-    if (value === testText) {
+    // Complete test - check if user has typed the complete test text
+    if (value.length >= testText.length) {
       setIsTyping(false);
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
+      }
+    }
+  };
+
+  const handleTimedInputChange = (value: string) => {
+    if (!isTyping && value.length > 0) {
+      setIsTyping(true);
+      setStartTime(Date.now());
+
+      // Generate text for timed test if not already set
+      if (!testText) {
+        const randomText =
+          TEST_TEXTS[Math.floor(Math.random() * TEST_TEXTS.length)];
+        setTestText(randomText);
+      }
+    }
+
+    setCurrentInput(value);
+    setCurrentCharIndex(value.length);
+
+    // Track incorrect characters
+    const newIncorrectChars = new Set<number>();
+    for (let i = 0; i < value.length; i++) {
+      if (value[i] !== testText[i]) {
+        newIncorrectChars.add(i);
+      }
+    }
+    setIncorrectChars(newIncorrectChars);
+
+    // For timed tests, check if time is up
+    if (isTimedTest && startTime) {
+      const timeElapsed = (Date.now() - startTime) / 1000;
+      if (timeElapsed >= testDuration) {
+        setIsTyping(false);
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+        }
       }
     }
   };
@@ -252,6 +340,16 @@ const EnhancedTypingTrainer = () => {
       }
     };
   }, [isTyping, calculateStats]);
+
+  // Stop stats calculation when timed test ends
+  useEffect(() => {
+    if (isTimedTest && startTime) {
+      const timeElapsed = (Date.now() - startTime) / 1000;
+      if (timeElapsed >= testDuration && intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    }
+  }, [isTimedTest, startTime, testDuration]);
 
   useEffect(() => {
     if (isPracticeTyping) {
@@ -360,24 +458,58 @@ const EnhancedTypingTrainer = () => {
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center relative">
-          <div className="absolute top-0 right-0">
+          <div className="absolute top-0 right-0 flex items-center gap-2">
+            <Button
+              onClick={() =>
+                setSettings((prev) => ({
+                  ...prev,
+                  showStatsCards: !prev.showStatsCards,
+                }))
+              }
+              size="sm"
+              variant="outline"
+              className="flex items-center gap-2"
+              title={
+                settings.showStatsCards
+                  ? "Hide Stats Cards"
+                  : "Show Stats Cards"
+              }
+            >
+              {settings.showStatsCards ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
+              <span className="hidden sm:inline">
+                {settings.showStatsCards ? "Hide Stats" : "Show Stats"}
+              </span>
+            </Button>
+            <Button
+              onClick={() => setIsSettingsOpen(true)}
+              size="sm"
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <Settings className="h-4 w-4" />
+              <span className="hidden sm:inline">Settings</span>
+            </Button>
             <ThemeToggle
               onThemeChange={(theme) => {
                 setSettings((prev) => ({ ...prev, appTheme: theme }));
               }}
             />
           </div>
-          <div className="flex items-center justify-center gap-4 mb-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4 pt-12 sm:pt-0">
             <img
               src="/tt-tutor-logo.svg"
               alt="TT Tutor Logo"
-              className="h-16 w-auto"
+              className="h-12 sm:h-16 w-auto"
             />
-            <div className="text-left">
-              <h1 className="text-4xl font-bold text-foreground mb-2">
+            <div className="text-center sm:text-left">
+              <h1 className="text-2xl sm:text-4xl font-bold text-foreground mb-2">
                 TT Tutor
               </h1>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-sm sm:text-lg text-muted-foreground">
                 Master your typing skills with real-time feedback and analytics
               </p>
             </div>
@@ -411,21 +543,11 @@ const EnhancedTypingTrainer = () => {
         {mode === "test" && (
           <Card>
             <CardContent className="p-6">
-              <div className="relative">
-                <div className="absolute top-0 right-0 flex items-center gap-1 text-xs text-muted-foreground/60 font-medium">
-                  <img
-                    src="/tt-tutor-logo.svg"
-                    alt="TT Tutor Logo"
-                    className="h-3 w-auto opacity-60"
-                  />
-                  <span>TT Tutor</span>
-                </div>
-                <ProgressBar
-                  progress={progress}
-                  label="Test Progress"
-                  showPercentage={true}
-                />
-              </div>
+              <ProgressBar
+                progress={progress}
+                label="Test Progress"
+                showPercentage={true}
+              />
             </CardContent>
           </Card>
         )}
@@ -436,7 +558,6 @@ const EnhancedTypingTrainer = () => {
             practiceInput={practiceInput}
             onPracticeInputChange={handlePracticeInputChange}
             onReset={resetPractice}
-            onOpenSettings={() => setIsSettingsOpen(true)}
             isPracticeTyping={isPracticeTyping}
             pressedKeys={pressedKeys}
             getKeyColor={getKeyColor}
@@ -450,13 +571,19 @@ const EnhancedTypingTrainer = () => {
           <TestMode
             testText={testText}
             currentInput={currentInput}
-            onInputChange={handleInputChange}
-            onReset={initializeTest}
-            onOpenSettings={() => setIsSettingsOpen(true)}
+            onInputChange={
+              isTimedTest ? handleTimedInputChange : handleInputChange
+            }
+            onReset={isTimedTest ? initializeTimedTest : initializeTest}
+            onRetry={retryTest}
             nextKey={nextKey}
             getCharacterClass={getCharacterClass}
             stats={stats}
             textareaRef={textareaRef}
+            isTimedTest={isTimedTest}
+            testDuration={testDuration}
+            onTimedTestChange={setIsTimedTest}
+            onTestDurationChange={setTestDuration}
           />
         )}
 

@@ -19,6 +19,11 @@ export const StatsDisplay = ({ stats, settings }: StatsDisplayProps) => {
     return "down";
   };
 
+  // Don't render if stats cards are hidden
+  if (!settings.showStatsCards) {
+    return null;
+  }
+
   return (
     <div className="relative">
       {/* Background decoration */}

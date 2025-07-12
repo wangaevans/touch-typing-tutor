@@ -13,7 +13,6 @@ interface PracticeModeProps {
   practiceInput: string;
   onPracticeInputChange: (value: string) => void;
   onReset: () => void;
-  onOpenSettings: () => void;
   isPracticeTyping: boolean;
   pressedKeys: Set<string>;
   getKeyColor: (key: string) => string;
@@ -60,15 +59,6 @@ export const PracticeMode = ({
               >
                 <RotateCcw className="h-4 w-4" />
                 Reset
-              </Button>
-              <Button
-                onClick={onOpenSettings}
-                size="sm"
-                variant="outline"
-                className="flex items-center gap-2"
-              >
-                <Settings className="h-4 w-4" />
-                Settings
               </Button>
             </div>
           </div>

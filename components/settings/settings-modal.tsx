@@ -206,8 +206,8 @@ const KeyboardTab = ({
           </Select>
           {isAutoManaged && (
             <p className="text-xs text-muted-foreground">
-              Theme automatically switches between &quot;Default&quot; (light) and
-              &quot;Minimal Dark&quot; (dark) based on your app theme.
+              Theme automatically switches between &quot;Default&quot; (light)
+              and &quot;Minimal Dark&quot; (dark) based on your app theme.
               {isSystemTheme && " Changes with system preference."}
             </p>
           )}
@@ -317,6 +317,16 @@ const PracticeTab = ({
 }) => (
   <TabsContent value="practice" className="space-y-4 mt-4">
     <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <Label className="text-sm font-medium">Show Stats Cards</Label>
+        <Switch
+          checked={settings.showStatsCards}
+          onCheckedChange={(checked) =>
+            onSettingsChange({ ...settings, showStatsCards: checked })
+          }
+        />
+      </div>
+
       <div className="flex items-center justify-between">
         <Label className="text-sm font-medium">Show WPM Target</Label>
         <Switch
