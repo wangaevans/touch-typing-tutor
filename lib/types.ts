@@ -7,13 +7,7 @@ export interface KeyboardKey {
 
 export interface Settings {
   soundEnabled: boolean;
-  keyboardTheme:
-    | "default"
-    | "colorful"
-    | "minimal"
-    | "neon"
-    | "retro"
-    | "gradient";
+  keyboardTheme: string; // Allow any theme from the keyboard themes
   showFingerGuide: boolean;
   appTheme: "light" | "dark" | "system";
   keyboardSize: number;

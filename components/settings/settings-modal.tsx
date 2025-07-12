@@ -1,4 +1,4 @@
-import { Settings, Sun, Moon, Monitor, Palette } from "lucide-react";
+import { Sun, Moon, Monitor, Palette } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -37,9 +37,13 @@ export const SettingsModal = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Settings className="h-5 w-5" />
-            Customization Settings
+          <DialogTitle className="flex items-center gap-3">
+            <img
+              src="/tt-tutor-logo.svg"
+              alt="TT Tutor Logo"
+              className="h-6 w-auto"
+            />
+            <span>Customization Settings</span>
           </DialogTitle>
         </DialogHeader>
 
@@ -161,87 +165,109 @@ const KeyboardTab = ({
 }: {
   settings: SettingsType;
   onSettingsChange: (settings: SettingsType) => void;
-}) => (
-  <TabsContent value="keyboard" className="space-y-4 mt-4">
-    <div className="space-y-4">
-      <div className="space-y-2">
-        <Label className="text-sm font-medium">Keyboard Theme</Label>
-        <Select
-          value={settings.keyboardTheme}
-          onValueChange={(value: SettingsType["keyboardTheme"]) =>
-            onSettingsChange({ ...settings, keyboardTheme: value })
-          }
-        >
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {Object.entries(KEYBOARD_THEMES).map(([key, theme]) => (
-              <SelectItem key={key} value={key}>
-                <div className="flex items-center gap-2">
-                  <Palette className="h-4 w-4" />
-                  {theme.name}
-                </div>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+}) => {
+  // Check if keyboard theme is being auto-managed
+  const isAutoManaged =
+    settings.keyboardTheme === "default" ||
+    settings.keyboardTheme === "minimalDark";
+  const isSystemTheme = settings.appTheme === "system";
 
-      <div className="space-y-2">
-        <Label className="text-sm font-medium">
-          Keyboard Size: {settings.keyboardSize}%
-        </Label>
-        <Slider
-          value={[settings.keyboardSize]}
-          onValueChange={([value]) =>
-            onSettingsChange({ ...settings, keyboardSize: value })
-          }
-          max={150}
-          min={50}
-          step={10}
-          className="w-full"
-        />
-      </div>
+  return (
+    <TabsContent value="keyboard" className="space-y-4 mt-4">
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label className="text-sm font-medium">Keyboard Theme</Label>
+            {isAutoManaged && (
+              <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
+                Auto-managed
+              </span>
+            )}
+          </div>
+          <Select
+            value={settings.keyboardTheme}
+            onValueChange={(value: SettingsType["keyboardTheme"]) =>
+              onSettingsChange({ ...settings, keyboardTheme: value })
+            }
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.entries(KEYBOARD_THEMES).map(([key, theme]) => (
+                <SelectItem key={key} value={key}>
+                  <div className="flex items-center gap-2">
+                    <Palette className="h-4 w-4" />
+                    {theme.name}
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {isAutoManaged && (
+            <p className="text-xs text-muted-foreground">
+              Theme automatically switches between &quot;Default&quot; (light) and
+              &quot;Minimal Dark&quot; (dark) based on your app theme.
+              {isSystemTheme && " Changes with system preference."}
+            </p>
+          )}
+        </div>
 
-      <div className="space-y-2">
-        <Label className="text-sm font-medium">
-          Highlight Intensity: {settings.highlightIntensity}%
-        </Label>
-        <Slider
-          value={[settings.highlightIntensity]}
-          onValueChange={([value]) =>
-            onSettingsChange({ ...settings, highlightIntensity: value })
-          }
-          max={100}
-          min={10}
-          step={10}
-          className="w-full"
-        />
-      </div>
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">
+            Keyboard Size: {settings.keyboardSize}%
+          </Label>
+          <Slider
+            value={[settings.keyboardSize]}
+            onValueChange={([value]) =>
+              onSettingsChange({ ...settings, keyboardSize: value })
+            }
+            max={150}
+            min={50}
+            step={10}
+            className="w-full"
+          />
+        </div>
 
-      <div className="flex items-center justify-between">
-        <Label className="text-sm font-medium">Show Finger Guide</Label>
-        <Switch
-          checked={settings.showFingerGuide}
-          onCheckedChange={(checked) =>
-            onSettingsChange({ ...settings, showFingerGuide: checked })
-          }
-        />
-      </div>
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">
+            Highlight Intensity: {settings.highlightIntensity}%
+          </Label>
+          <Slider
+            value={[settings.highlightIntensity]}
+            onValueChange={([value]) =>
+              onSettingsChange({ ...settings, highlightIntensity: value })
+            }
+            max={100}
+            min={10}
+            step={10}
+            className="w-full"
+          />
+        </div>
 
-      <div className="flex items-center justify-between">
-        <Label className="text-sm font-medium">Show Key Labels</Label>
-        <Switch
-          checked={settings.showKeyLabels}
-          onCheckedChange={(checked) =>
-            onSettingsChange({ ...settings, showKeyLabels: checked })
-          }
-        />
+        <div className="flex items-center justify-between">
+          <Label className="text-sm font-medium">Show Finger Guide</Label>
+          <Switch
+            checked={settings.showFingerGuide}
+            onCheckedChange={(checked) =>
+              onSettingsChange({ ...settings, showFingerGuide: checked })
+            }
+          />
+        </div>
+
+        <div className="flex items-center justify-between">
+          <Label className="text-sm font-medium">Show Key Labels</Label>
+          <Switch
+            checked={settings.showKeyLabels}
+            onCheckedChange={(checked) =>
+              onSettingsChange({ ...settings, showKeyLabels: checked })
+            }
+          />
+        </div>
       </div>
-    </div>
-  </TabsContent>
-);
+    </TabsContent>
+  );
+};
 
 const AudioTab = ({
   settings,

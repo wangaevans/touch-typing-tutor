@@ -43,9 +43,13 @@ export const PracticeMode = ({
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <Settings className="h-5 w-5" />
-              Practice Mode
+            <CardTitle className="flex items-center gap-3">
+              <img
+                src="/tt-tutor-logo.svg"
+                alt="TT Tutor Logo"
+                className="h-5 w-auto"
+              />
+              <span>Practice Mode</span>
             </CardTitle>
             <div className="flex items-center gap-2">
               <Button

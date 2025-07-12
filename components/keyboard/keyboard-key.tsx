@@ -25,7 +25,9 @@ export const KeyboardKey = ({
 }: KeyboardKeyProps) => {
   const baseWidth = 40 * (settings.keyboardSize / 100);
   const keyWidth = baseWidth * (keyObj.width || 1);
-  const theme = KEYBOARD_THEMES[settings.keyboardTheme];
+  const theme =
+    KEYBOARD_THEMES[settings.keyboardTheme as keyof typeof KEYBOARD_THEMES] ||
+    KEYBOARD_THEMES.default;
 
   const getKeyStyle = () => {
     const baseStyle = {
@@ -59,6 +61,19 @@ export const KeyboardKey = ({
       };
     }
 
+    if (settings.keyboardTheme === "themeAware") {
+      return {
+        ...baseStyle,
+        backgroundColor: isPressed ? theme.pressedBg : theme.keyBg,
+        color: isPressed ? theme.pressedText : theme.keyText,
+        borderColor: theme.borderColor,
+        boxShadow: isHighlighted
+          ? `0 0 ${settings.highlightIntensity / 10}px rgba(59, 130, 246, 0.6)`
+          : "none",
+      };
+    }
+
+    // For all other themes (default, minimal, minimalDark, neon, etc.)
     return {
       ...baseStyle,
       backgroundColor: isPressed ? theme.pressedBg : theme.keyBg,
@@ -101,4 +116,4 @@ export const KeyboardKey = ({
       </Tooltip>
     </TooltipProvider>
   );
-}; 
+};

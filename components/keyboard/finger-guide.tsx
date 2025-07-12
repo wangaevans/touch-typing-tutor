@@ -1,4 +1,3 @@
-import { Hand } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Settings } from "@/lib/types";
 
@@ -13,9 +12,13 @@ export default function FingerGuide({ show }: FingerGuideProps) {
   return (
     <Card className="mt-6">
       <CardHeader>
-        <CardTitle className="text-center flex items-center justify-center gap-2">
-          <Hand className="h-5 w-5" />
-          Finger Guide
+        <CardTitle className="text-center flex items-center justify-center gap-3">
+          <img
+            src="/tt-tutor-logo.svg"
+            alt="TT Tutor Logo"
+            className="h-5 w-auto"
+          />
+          <span>Finger Guide</span>
         </CardTitle>
       </CardHeader>
       <CardContent>

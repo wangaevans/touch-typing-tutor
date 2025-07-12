@@ -1,12 +1,23 @@
 export const ENHANCED_KEYBOARD_THEMES = {
+  // Fixed themes - maintain appearance regardless of app theme
   default: {
     name: "Default",
+    keyBg: "#f3f4f6",
+    keyText: "#374151",
+    pressedBg: "#3b82f6",
+    pressedText: "#ffffff",
+    borderColor: "#d1d5db",
+  },
+  // Theme-aware theme - adapts to app theme
+  themeAware: {
+    name: "Theme Aware",
     keyBg: "hsl(var(--muted))",
     keyText: "hsl(var(--muted-foreground))",
     pressedBg: "hsl(var(--primary))",
     pressedText: "hsl(var(--primary-foreground))",
     borderColor: "hsl(var(--border))",
   },
+  // Fixed themes - maintain appearance regardless of app theme
   colorful: {
     name: "Colorful",
     keyBg: "dynamic", // Uses finger colors
@@ -17,11 +28,19 @@ export const ENHANCED_KEYBOARD_THEMES = {
   },
   minimal: {
     name: "Minimal",
-    keyBg: "hsl(var(--background))",
-    keyText: "hsl(var(--foreground))",
-    pressedBg: "hsl(var(--accent))",
-    pressedText: "hsl(var(--accent-foreground))",
-    borderColor: "hsl(var(--border))",
+    keyBg: "#ffffff",
+    keyText: "#000000",
+    pressedBg: "#e5e7eb",
+    pressedText: "#000000",
+    borderColor: "#d1d5db",
+  },
+  minimalDark: {
+    name: "Minimal Dark",
+    keyBg: "#1f2937",
+    keyText: "#ffffff",
+    pressedBg: "#374151",
+    pressedText: "#ffffff",
+    borderColor: "#4b5563",
   },
   neon: {
     name: "Neon",
