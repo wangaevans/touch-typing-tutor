@@ -1,7 +1,5 @@
 "use client";
-
 import { useState, useEffect, useCallback } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 
 // Import hooks
 import { useAudioContext, useKeyboardInput } from "@/lib/hooks";
@@ -12,7 +10,6 @@ import { usePracticeMode } from "@/hooks/usePracticeMode";
 
 // Import components
 import { SettingsModal } from "@/components/settings/settings-modal";
-import { ProgressBar } from "@/components/ui/progress-bar";
 import { PracticeMode } from "@/components/modes/practice-mode";
 import { TestMode } from "@/components/modes/test-mode";
 import { StatsPage } from "@/components/stats/stats-page";
@@ -57,7 +54,6 @@ const EnhancedTypingTrainer = () => {
     handleTimedInputChange,
     getCharacterClass,
     getNextKeyToPress,
-    getProgress,
     setIsTimedTest,
     setTestDuration,
   } = useTestMode(settings);
@@ -241,7 +237,6 @@ const EnhancedTypingTrainer = () => {
     }
   }, [mode]);
 
-  const progress = mode === "test" ? getProgress() : 0;
   const nextKey = mode === "test" ? getNextKeyToPress() : null;
 
   // Don't render until mounted to prevent hydration mismatch
@@ -254,7 +249,7 @@ const EnhancedTypingTrainer = () => {
               <img
                 src="/tt-tutor-logo.svg"
                 alt="TT Tutor Logo"
-                className="h-24 sm:h-24 w-auto"
+                className="h-12 sm:h-16 w-auto"
               />
               <div className="text-center sm:text-left">
                 <h1 className="text-2xl sm:text-4xl font-bold text-foreground mb-2">
