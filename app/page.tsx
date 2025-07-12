@@ -19,7 +19,7 @@ import { ProgressBar } from "@/components/ui/progress-bar";
 import { PracticeMode } from "@/components/modes/practice-mode";
 import { TestMode } from "@/components/modes/test-mode";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Settings, BarChart3, Eye, EyeOff } from "lucide-react";
+import { Settings, Eye, EyeOff } from "lucide-react";
 
 const EnhancedTypingTrainer = () => {
   const { setTheme, theme } = useTheme();

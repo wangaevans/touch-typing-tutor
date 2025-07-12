@@ -1,5 +1,5 @@
 import React from "react";
-import { Trophy, Clock, Target, TrendingUp } from "lucide-react";
+import { Trophy, Target, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Stats } from "@/lib/types";
@@ -18,7 +18,6 @@ export const TestSummary = ({
   isTimedTest,
   stats,
   testDuration,
-  onReset,
   onRetry,
 }: TestSummaryProps) => {
   if (!isVisible) return null;

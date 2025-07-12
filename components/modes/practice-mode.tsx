@@ -1,5 +1,5 @@
 import React from "react";
-import { RotateCcw, Settings, Play } from "lucide-react";
+import { RotateCcw, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -24,7 +24,6 @@ export const PracticeMode = ({
   practiceInput,
   onPracticeInputChange,
   onReset,
-  onOpenSettings,
   isPracticeTyping,
   pressedKeys,
   getKeyColor,
