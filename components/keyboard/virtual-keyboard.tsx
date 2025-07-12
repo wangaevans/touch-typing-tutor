@@ -1,5 +1,4 @@
 import React from "react";
-import { Keyboard } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { KeyboardKey } from "./keyboard-key";
 import { Settings } from "@/lib/types";
@@ -19,14 +18,18 @@ export const VirtualKeyboard = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Keyboard className="h-5 w-5" />
-          Virtual Keyboard
+        <CardTitle className="flex items-center gap-3">
+          <img
+            src="/tt-tutor-logo.svg"
+            alt="TT Tutor Logo"
+            className="h-5 w-auto"
+          />
+          <span>Virtual Keyboard</span>
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div
-          className="flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-lg"
+          className="flex flex-col items-center gap-2 p-4 bg-muted rounded-lg"
           style={{ transform: `scale(${settings.keyboardSize / 100})` }}
         >
           {KEYBOARD_LAYOUT.map((row, rowIndex) => (

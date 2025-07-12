@@ -22,7 +22,17 @@ export const StatsDisplay = ({ stats, settings }: StatsDisplayProps) => {
   return (
     <div className="relative">
       {/* Background decoration */}
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-50/50 to-purple-50/50 rounded-2xl -z-10" />
+      <div className="absolute inset-0 bg-gradient-to-r from-muted/50 to-accent/50 rounded-2xl -z-10" />
+
+      {/* TT Tutor branding */}
+      <div className="absolute top-2 left-2 flex items-center gap-2 text-xs text-muted-foreground/60 font-medium">
+        <img
+          src="/tt-tutor-logo.svg"
+          alt="TT Tutor Logo"
+          className="h-4 w-auto opacity-60"
+        />
+        <span>Analytics</span>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-1">
         <div

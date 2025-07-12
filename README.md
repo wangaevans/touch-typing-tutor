@@ -1,19 +1,17 @@
-# TT-Tutor: Interactive Typing Tutor
+# TT Tutor: Interactive Typing Tutor
 
-A modern, interactive typing tutor built with Next.js, React, and TypeScript. Practice your typing skills with a beautiful virtual keyboard, multiple themes, and comprehensive statistics tracking.
+A modern, interactive typing tutor built with Next.js, React, and TypeScript. Master your typing skills with TT Tutor's beautiful virtual keyboard, multiple themes, and comprehensive statistics tracking.
 
-![TT-Tutor Logo](public/tt-tutor-logo.svg)
-
-
+![TT Tutor Logo](public/tt-tutor-logo.svg)
 
 ## ✨ Features
 
-- **Virtual Keyboard**: Interactive keyboard with finger placement guidance
+- **TT Tutor Virtual Keyboard**: Interactive keyboard with finger placement guidance
 - **Multiple Themes**: 50+ beautiful keyboard themes including neon, retro, gradient, and more
-- **Practice & Test Modes**: Choose between practice mode for learning and test mode for assessment
-- **Real-time Statistics**: Track WPM, accuracy, and typing progress
+- **Practice & Test Modes**: Choose between TT Tutor's practice mode for learning and test mode for assessment
+- **Real-time Statistics**: Track WPM, accuracy, and typing progress with TT Tutor's analytics
 - **Finger Color Coding**: Visual guidance for proper finger placement
-- **Responsive Design**: Works seamlessly on desktop and mobile devices
+- **Responsive Design**: TT Tutor works seamlessly on desktop and mobile devices
 - **Dark/Light Mode**: Toggle between themes with system preference detection
 - **Accessibility**: Keyboard navigation and screen reader support
 
@@ -59,18 +57,18 @@ A modern, interactive typing tutor built with Next.js, React, and TypeScript. Pr
 
 ### Live Demo
 
-🌐 **Try it online**: [TT-Tutor Demo](https://tt-tutor.vercel.app) _(Coming soon)_
+🌐 **Try TT Tutor online**: [TT Tutor Demo](https://tt-tutor.vercel.app) _(Coming soon)_
 
 ## 🎯 Usage
 
-### Practice Mode
+### TT Tutor Practice Mode
 
-- Start typing to begin practice
+- Start typing to begin practice with TT Tutor
 - The virtual keyboard highlights the correct finger for each key
 - Real-time feedback on accuracy and speed
 - No time pressure - focus on accuracy
 
-### Test Mode
+### TT Tutor Test Mode
 
 - Timed typing tests with predefined text passages
 - Final statistics including WPM and accuracy
@@ -78,9 +76,9 @@ A modern, interactive typing tutor built with Next.js, React, and TypeScript. Pr
 
 ### Customization
 
-- Choose from 50+ keyboard themes
+- Choose from 50+ keyboard themes in TT Tutor
 - Toggle between light and dark modes
-- Adjust settings in the settings modal
+- Adjust settings in the TT Tutor settings modal
 
 ## 🛠️ Technologies Used
 
@@ -119,7 +117,7 @@ tt-tutor/
 
 ## 🎨 Available Themes
 
-The app includes 50+ keyboard themes:
+TT Tutor includes 50+ keyboard themes:
 
 - **Classic**: Default, Minimal, Retro
 - **Neon**: Neon Pink, Neon Blue, Neon Green, Neon Purple, Neon Orange
@@ -137,12 +135,6 @@ npm run lint
 
 # Type checking
 npm run type-check
-
-# Build for production
-npm run build
-
-# Run tests (placeholder - add your test framework)
-npm run test
 ```
 
 ## 📦 Building for Production

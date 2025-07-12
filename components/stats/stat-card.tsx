@@ -81,7 +81,7 @@ export const StatCard = ({
   const isTargetMet = target ? value >= target : false;
 
   return (
-    <Card className="group relative overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-gray-50 h-full min-h-[200px] flex flex-col">
+    <Card className="group relative overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-card to-muted h-full min-h-[200px] flex flex-col">
       {/* Background gradient overlay */}
       <div
         className={`absolute inset-0 bg-gradient-to-br ${getGradientClass()} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}
@@ -101,7 +101,7 @@ export const StatCard = ({
               <Icon size={24} className="text-white" />
             </div>
             <div>
-              <span className="text-sm font-semibold text-gray-600 group-hover:text-gray-800 transition-colors duration-300">
+              <span className="text-sm font-semibold text-muted-foreground group-hover:text-foreground transition-colors duration-300">
                 {label}
               </span>
               {trend && (
@@ -112,10 +112,10 @@ export const StatCard = ({
                         ? "bg-green-500"
                         : trend === "down"
                         ? "bg-red-500"
-                        : "bg-gray-400"
+                        : "bg-muted-foreground"
                     }`}
                   />
-                  <span className="text-xs text-gray-500 capitalize">
+                  <span className="text-xs text-muted-foreground capitalize">
                     {trend}
                   </span>
                 </div>
@@ -128,7 +128,7 @@ export const StatCard = ({
               className={`${
                 isTargetMet
                   ? `bg-gradient-to-r ${getGradientClass()} text-white border-0`
-                  : "bg-gray-100 text-gray-600"
+                  : "bg-muted text-muted-foreground"
               } font-semibold shadow-sm`}
             >
               Target: {target}
@@ -139,27 +139,37 @@ export const StatCard = ({
         <div className="flex-1 flex flex-col justify-between">
           <div className="space-y-3">
             <div className="flex items-baseline gap-2">
-              <span className="text-4xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent group-hover:from-gray-900 group-hover:to-gray-700 transition-all duration-300">
+              <span className="text-4xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent group-hover:from-foreground group-hover:to-foreground transition-all duration-300">
                 {value}
               </span>
               {label === "WPM" && (
-                <span className="text-sm text-gray-500 font-medium">wpm</span>
+                <span className="text-sm text-muted-foreground font-medium">
+                  wpm
+                </span>
               )}
               {label === "Accuracy" && (
-                <span className="text-sm text-gray-500 font-medium">%</span>
+                <span className="text-sm text-muted-foreground font-medium">
+                  %
+                </span>
               )}
               {label === "Time" && (
-                <span className="text-sm text-gray-500 font-medium">s</span>
+                <span className="text-sm text-muted-foreground font-medium">
+                  s
+                </span>
               )}
             </div>
 
             {target && (
               <div className="space-y-2">
                 <div className="flex justify-between items-center text-xs">
-                  <span className="text-gray-500 font-medium">Progress</span>
+                  <span className="text-muted-foreground font-medium">
+                    Progress
+                  </span>
                   <span
                     className={`font-bold ${
-                      isTargetMet ? getIconColorClass() : "text-gray-500"
+                      isTargetMet
+                        ? getIconColorClass()
+                        : "text-muted-foreground"
                     }`}
                   >
                     {Math.round(progressValue)}%
@@ -168,19 +178,21 @@ export const StatCard = ({
                 <div className="relative">
                   <Progress
                     value={progressValue}
-                    className={`h-3 bg-gray-200 group-hover:bg-gray-100 transition-colors duration-300`}
+                    className={`h-3 bg-muted group-hover:bg-muted/80 transition-colors duration-300`}
                   />
                   <div
                     className={`absolute top-0 left-0 h-3 rounded-full transition-all duration-500 ease-out ${
-                      isTargetMet ? getProgressColorClass() : "bg-gray-400"
+                      isTargetMet
+                        ? getProgressColorClass()
+                        : "bg-muted-foreground"
                     }`}
                     style={{ width: `${Math.min(progressValue, 100)}%` }}
                   />
                 </div>
               </div>
             )}
-              </div>
           </div>
+        </div>
       </CardContent>
     </Card>
   );

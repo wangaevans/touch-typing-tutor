@@ -14,8 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Touch Typing Trainer",
-  description: "Master the art of touch typing with visual feedback",
+  title: "TT Tutor - Master Touch Typing",
+  description:
+    "Master the art of touch typing with TT Tutor's visual feedback and comprehensive analytics",
 };
 
 export default function RootLayout({
@@ -25,6 +26,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

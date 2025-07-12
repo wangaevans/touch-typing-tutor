@@ -34,9 +34,13 @@ export const TestMode = ({
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <Settings className="h-5 w-5" />
-            Typing Test
+          <CardTitle className="flex items-center gap-3">
+            <img
+              src="/tt-tutor-logo.svg"
+              alt="TT Tutor Logo"
+              className="h-5 w-auto"
+            />
+            <span>Typing Test</span>
           </CardTitle>
           <div className="flex items-center gap-2">
             <Badge variant="outline">Next: {nextKey || "Complete!"}</Badge>
@@ -62,7 +66,7 @@ export const TestMode = ({
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="bg-white rounded-lg p-6 border-2 border-gray-200 font-mono text-lg leading-relaxed">
+        <div className="bg-card rounded-lg p-6 border-2 border-border font-mono text-lg leading-relaxed">
           {testText.split("").map((char, index) => (
             <span
               key={index}
