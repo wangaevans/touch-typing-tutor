@@ -10,15 +10,19 @@ export const TestTextDisplay = ({
   getCharacterClass,
 }: TestTextDisplayProps) => {
   return (
-    <div className="bg-card rounded-lg p-6 border-2 border-border font-mono text-lg leading-relaxed">
-      {testText.split("").map((char, index) => (
-        <span
-          key={index}
-          className={`${getCharacterClass(index)} px-0.5 py-1 rounded`}
-        >
-          {char}
-        </span>
-      ))}
+    <div className="bg-muted/30 rounded-xl p-6 border border-border/50 font-mono text-lg leading-8 min-h-[120px]">
+      <div className="flex flex-wrap">
+        {testText.split("").map((char, index) => (
+          <span
+            key={index}
+            className={`${getCharacterClass(
+              index
+            )} px-0.5 py-0.5 rounded-sm transition-all duration-150`}
+          >
+            {char === " " ? "\u00A0" : char}
+          </span>
+        ))}
+      </div>
     </div>
   );
 };

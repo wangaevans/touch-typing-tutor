@@ -20,6 +20,20 @@ export interface Settings {
   keyboardLayout: "qwerty" | "dvorak" | "colemak";
   visualFeedback: "subtle" | "normal" | "intense";
   showStatsCards: boolean;
+  isTimedTest: boolean;
+  testDuration: number;
+  strictMode: boolean;
+  // Advanced test settings
+  testLevel: "beginner" | "intermediate" | "advanced" | "expert";
+  testType:
+    | "speed"
+    | "accuracy"
+    | "endurance"
+    | "programming"
+    | "numbers"
+    | "punctuation";
+  testLength: "short" | "medium" | "long";
+  showAdvancedSettings: boolean;
 }
 
 export interface Stats {
@@ -30,4 +44,11 @@ export interface Stats {
   charactersTyped: number;
   correctChars: number;
   incorrectChars: number;
+}
+
+export interface StatsHistory {
+  id: string;
+  timestamp: number;
+  stats: Stats;
+  mode: "practice" | "test";
 }

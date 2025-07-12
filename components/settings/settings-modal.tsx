@@ -1,4 +1,4 @@
-import { Sun, Moon, Monitor, Palette } from "lucide-react";
+import { Sun, Moon, Monitor, Palette, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dialog";
 import { Settings as SettingsType } from "@/lib/types";
 import { KEYBOARD_THEMES } from "@/lib/constants";
+import { AdvancedTestSettings } from "@/components/modes/advanced-test-settings";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -48,11 +49,15 @@ export const SettingsModal = ({
         </DialogHeader>
 
         <Tabs defaultValue="appearance" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="appearance">Appearance</TabsTrigger>
             <TabsTrigger value="keyboard">Keyboard</TabsTrigger>
             <TabsTrigger value="audio">Audio</TabsTrigger>
             <TabsTrigger value="practice">Practice</TabsTrigger>
+            <TabsTrigger value="advanced" className="flex items-center gap-1">
+              <Zap className="h-3 w-3" />
+              Advanced
+            </TabsTrigger>
           </TabsList>
 
           <AppearanceTab
@@ -65,6 +70,10 @@ export const SettingsModal = ({
           />
           <AudioTab settings={settings} onSettingsChange={onSettingsChange} />
           <PracticeTab
+            settings={settings}
+            onSettingsChange={onSettingsChange}
+          />
+          <AdvancedTab
             settings={settings}
             onSettingsChange={onSettingsChange}
           />
@@ -354,6 +363,22 @@ const PracticeTab = ({
         />
       </div>
 
+      <div className="flex items-center justify-between">
+        <Label className="text-sm font-medium">Strict Mode</Label>
+        <Switch
+          checked={settings.strictMode}
+          onCheckedChange={(checked) =>
+            onSettingsChange({ ...settings, strictMode: checked })
+          }
+        />
+      </div>
+      {settings.strictMode && (
+        <p className="text-xs text-muted-foreground">
+          In strict mode, you must correct mistakes before continuing. This
+          helps improve accuracy.
+        </p>
+      )}
+
       <div className="space-y-2">
         <Label className="text-sm font-medium">Keyboard Layout</Label>
         <Select
@@ -372,6 +397,45 @@ const PracticeTab = ({
           </SelectContent>
         </Select>
       </div>
+    </div>
+  </TabsContent>
+);
+
+const AdvancedTab = ({
+  settings,
+  onSettingsChange,
+}: {
+  settings: SettingsType;
+  onSettingsChange: (settings: SettingsType) => void;
+}) => (
+  <TabsContent value="advanced" className="space-y-4 mt-4">
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <Label className="text-sm font-medium">Show Advanced Settings</Label>
+        <Switch
+          checked={settings.showAdvancedSettings}
+          onCheckedChange={(checked) =>
+            onSettingsChange({ ...settings, showAdvancedSettings: checked })
+          }
+        />
+      </div>
+
+      {settings.showAdvancedSettings && (
+        <AdvancedTestSettings
+          settings={settings}
+          onSettingsChange={onSettingsChange}
+        />
+      )}
+
+      {!settings.showAdvancedSettings && (
+        <div className="p-4 bg-muted/50 rounded-lg text-center">
+          <Zap className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+          <p className="text-sm text-muted-foreground">
+            Enable advanced settings to access test levels, types, and
+            specialized content.
+          </p>
+        </div>
+      )}
     </div>
   </TabsContent>
 );
