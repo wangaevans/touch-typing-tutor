@@ -1,103 +1,359 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState, useEffect, useRef, useCallback } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+
+// Import types and constants
+import { Settings as SettingsType, Stats } from "@/lib/types";
+import { FINGER_COLORS, TEST_TEXTS } from "@/lib/constants";
+
+// Import hooks
+import { useAudioContext, useKeyboardInput } from "@/lib/hooks";
+
+// Import components
+import { SettingsModal } from "@/components/settings/settings-modal";
+import { StatsDisplay } from "@/components/stats/stats-display";
+import { ProgressBar } from "@/components/ui/progress-bar";
+import { PracticeMode } from "@/components/modes/practice-mode";
+import { TestMode } from "@/components/modes/test-mode";
+
+const EnhancedTypingTrainer = () => {
+  const [mode, setMode] = useState<"practice" | "test">("practice");
+  const [settings, setSettings] = useState<SettingsType>({
+    soundEnabled: true,
+    keyboardTheme: "default",
+    showFingerGuide: true,
+    appTheme: "system",
+    keyboardSize: 100,
+    animationSpeed: 100,
+    highlightIntensity: 50,
+    soundVolume: 30,
+    showWPMTarget: true,
+    wpmTarget: 40,
+    showKeyLabels: true,
+    keyboardLayout: "qwerty",
+    visualFeedback: "normal",
+  });
+
+  const [stats, setStats] = useState<Stats>({
+    wpm: 0,
+    accuracy: 100,
+    errors: 0,
+    timeElapsed: 0,
+    charactersTyped: 0,
+    correctChars: 0,
+    incorrectChars: 0,
+  });
+
+  const [testText, setTestText] = useState("");
+  const [currentInput, setCurrentInput] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const [currentCharIndex, setCurrentCharIndex] = useState(0);
+  const [incorrectChars, setIncorrectChars] = useState<Set<number>>(new Set());
+  const [practiceInput, setPracticeInput] = useState("");
+  const [practiceStartTime, setPracticeStartTime] = useState<number | null>(
+    null
+  );
+  const [isPracticeTyping, setIsPracticeTyping] = useState(false);
+
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const practiceTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const practiceIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const { playSound } = useAudioContext();
+
+  const pressedKeys = useKeyboardInput(() => {
+    if (settings.soundEnabled) {
+      playSound(800, 0.1, settings.soundVolume / 100);
+    }
+  });
+
+  const initializeTest = useCallback(() => {
+    const randomText =
+      TEST_TEXTS[Math.floor(Math.random() * TEST_TEXTS.length)];
+    setTestText(randomText);
+    setCurrentInput("");
+    setCurrentCharIndex(0);
+    setIncorrectChars(new Set());
+    setStartTime(null);
+    setIsTyping(false);
+    setStats({
+      wpm: 0,
+      accuracy: 100,
+      errors: 0,
+      timeElapsed: 0,
+      charactersTyped: 0,
+      correctChars: 0,
+      incorrectChars: 0,
+    });
+  }, []);
+
+  const resetPractice = useCallback(() => {
+    setPracticeInput("");
+    setPracticeStartTime(null);
+    setIsPracticeTyping(false);
+    setStats({
+      wpm: 0,
+      accuracy: 100,
+      errors: 0,
+      timeElapsed: 0,
+      charactersTyped: 0,
+      correctChars: 0,
+      incorrectChars: 0,
+    });
+  }, []);
+
+  const calculateStats = useCallback(() => {
+    if (!startTime) return;
+
+    const timeElapsed = (Date.now() - startTime) / 1000;
+    const charactersTyped = currentInput.length;
+    const correctChars = currentInput
+      .split("")
+      .filter((char, index) => char === testText[index]).length;
+    const incorrectChars = charactersTyped - correctChars;
+    const wpm = Math.round(correctChars / 5 / (timeElapsed / 60));
+    const accuracy =
+      charactersTyped > 0
+        ? Math.round((correctChars / charactersTyped) * 100)
+        : 100;
+
+    setStats({
+      wpm: wpm || 0,
+      accuracy,
+      errors: incorrectChars,
+      timeElapsed: Math.round(timeElapsed),
+      charactersTyped,
+      correctChars,
+      incorrectChars,
+    });
+  }, [currentInput, testText, startTime]);
+
+  const calculatePracticeStats = useCallback(() => {
+    if (!practiceStartTime) return;
+
+    const timeElapsed = (Date.now() - practiceStartTime) / 1000;
+    const charactersTyped = practiceInput.length;
+    const wpm = Math.round(charactersTyped / 5 / (timeElapsed / 60));
+    const accuracy = 100; // In practice mode, all characters are considered correct
+
+    setStats({
+      wpm: wpm || 0,
+      accuracy,
+      errors: 0,
+      timeElapsed: Math.round(timeElapsed),
+      charactersTyped,
+      correctChars: charactersTyped,
+      incorrectChars: 0,
+    });
+  }, [practiceInput, practiceStartTime]);
+
+  const handleInputChange = (value: string) => {
+    if (!isTyping && value.length > 0) {
+      setIsTyping(true);
+      setStartTime(Date.now());
+    }
+
+    setCurrentInput(value);
+    setCurrentCharIndex(value.length);
+
+    // Track incorrect characters
+    const newIncorrectChars = new Set<number>();
+    for (let i = 0; i < value.length; i++) {
+      if (value[i] !== testText[i]) {
+        newIncorrectChars.add(i);
+      }
+    }
+    setIncorrectChars(newIncorrectChars);
+
+    // Complete test
+    if (value === testText) {
+      setIsTyping(false);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    }
+  };
+
+  const handlePracticeInputChange = (value: string) => {
+    if (!isPracticeTyping && value.length > 0) {
+      setIsPracticeTyping(true);
+      setPracticeStartTime(Date.now());
+    }
+
+    setPracticeInput(value);
+
+    // Complete practice session (optional - could be endless)
+    if (value.length > 0 && !isPracticeTyping) {
+      setIsPracticeTyping(true);
+      setPracticeStartTime(Date.now());
+    }
+  };
+
+  const getKeyColor = (key: string): string => {
+    const finger = FINGER_COLORS[key as keyof typeof FINGER_COLORS];
+    return finger || "#6b7280";
+  };
+
+  const getCharacterClass = (index: number) => {
+    if (index < currentInput.length) {
+      return incorrectChars.has(index)
+        ? "text-red-500 bg-red-100"
+        : "text-green-600 bg-green-100";
+    }
+    if (index === currentCharIndex) {
+      return "bg-blue-200 animate-pulse";
+    }
+    return "text-gray-400";
+  };
+
+  const getNextKeyToPress = () => {
+    if (currentCharIndex < testText.length) {
+      return testText[currentCharIndex];
+    }
+    return null;
+  };
+
+  useEffect(() => {
+    if (mode === "test") {
+      initializeTest();
+    } else {
+      resetPractice();
+    }
+  }, [initializeTest, resetPractice, mode]);
+
+  useEffect(() => {
+    if (isTyping) {
+      intervalRef.current = setInterval(calculateStats, 100);
+    } else if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [isTyping, calculateStats]);
+
+  useEffect(() => {
+    if (isPracticeTyping) {
+      practiceIntervalRef.current = setInterval(calculatePracticeStats, 100);
+    } else if (practiceIntervalRef.current) {
+      clearInterval(practiceIntervalRef.current);
+    }
+
+    return () => {
+      if (practiceIntervalRef.current) {
+        clearInterval(practiceIntervalRef.current);
+      }
+    };
+  }, [isPracticeTyping, calculatePracticeStats]);
+
+  useEffect(() => {
+    if (mode === "test" && textareaRef.current) {
+      textareaRef.current.focus();
+    } else if (mode === "practice" && practiceTextareaRef.current) {
+      practiceTextareaRef.current.focus();
+    }
+  }, [mode]);
+
+  const progress =
+    mode === "test" ? (currentCharIndex / testText.length) * 100 : 0;
+  const nextKey = mode === "test" ? getNextKeyToPress() : null;
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            Enhanced Typing Trainer
+          </h1>
+          <p className="text-lg text-gray-600">
+            Master your typing skills with real-time feedback and analytics
+          </p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+
+        {/* Mode Selection */}
+        <div className="flex justify-center mb-6">
+          <div className="bg-card rounded-lg p-1 shadow-md border">
+            <Button
+              variant={mode === "practice" ? "default" : "ghost"}
+              onClick={() => setMode("practice")}
+              className="px-6"
+            >
+              Practice Mode
+            </Button>
+            <Button
+              variant={mode === "test" ? "default" : "ghost"}
+              onClick={() => setMode("test")}
+              className="px-6"
+            >
+              Test Mode
+            </Button>
+          </div>
+        </div>
+
+        {/* Stats Display */}
+        <StatsDisplay stats={stats} settings={settings} />
+
+        {/* Progress */}
+        {mode === "test" && (
+          <Card>
+            <CardContent className="p-6">
+              <ProgressBar
+                progress={progress}
+                label="Test Progress"
+                showPercentage={true}
+              />
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Practice Mode */}
+        {mode === "practice" && (
+          <PracticeMode
+            practiceInput={practiceInput}
+            onPracticeInputChange={handlePracticeInputChange}
+            onReset={resetPractice}
+            onOpenSettings={() => setIsSettingsOpen(true)}
+            isPracticeTyping={isPracticeTyping}
+            pressedKeys={pressedKeys}
+            getKeyColor={getKeyColor}
+            settings={settings}
+            practiceTextareaRef={practiceTextareaRef}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
+        )}
+
+        {/* Test Mode */}
+        {mode === "test" && (
+          <TestMode
+            testText={testText}
+            currentInput={currentInput}
+            onInputChange={handleInputChange}
+            onReset={initializeTest}
+            onOpenSettings={() => setIsSettingsOpen(true)}
+            nextKey={nextKey}
+            getCharacterClass={getCharacterClass}
+            stats={stats}
+            textareaRef={textareaRef}
           />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        )}
+
+        {/* Settings Modal */}
+        <SettingsModal
+          isOpen={isSettingsOpen}
+          onClose={() => setIsSettingsOpen(false)}
+          settings={settings}
+          onSettingsChange={setSettings}
+        />
+      </div>
     </div>
   );
-}
+};
+
+export default EnhancedTypingTrainer;
