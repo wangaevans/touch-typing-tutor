@@ -42,12 +42,7 @@ export const PracticeMode = ({
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-3">
-              <img
-                src="/tt-tutor-logo.svg"
-                alt="TT Tutor Logo"
-                className="h-5 w-auto"
-              />
-              <span>Practice Mode</span>
+                     Practice Mode
             </CardTitle>
             <div className="flex items-center gap-2">
               <Button
@@ -65,7 +60,7 @@ export const PracticeMode = ({
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label className="text-sm font-medium text-muted-foreground">
-              Practice your typing skills freely. Your WPM and timing will be
+              Practice your typing skills freely. Your WPM and timing will not be
               tracked.
             </Label>
           </div>
@@ -89,7 +84,7 @@ export const PracticeMode = ({
         </CardContent>
       </Card>
 
-      <FingerGuide show={settings.showFingerGuide} settings={settings} />
+      <FingerGuide show={false} settings={settings} />
     </>
   );
 };

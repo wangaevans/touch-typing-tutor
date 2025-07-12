@@ -3,16 +3,16 @@ import { ENHANCED_KEYBOARD_THEMES } from "./keyboard-themes";
 
 // Constants
 export const FINGER_COLORS = {
-  leftPinky: "#ef4444",
-  leftRing: "#06b6d4",
-  leftMiddle: "#3b82f6",
-  leftIndex: "#10b981",
-  leftThumb: "#f59e0b",
-  rightThumb: "#a855f7",
-  rightIndex: "#84cc16",
-  rightMiddle: "#8b5cf6",
-  rightRing: "#f97316",
-  rightPinky: "#ec4899",
+  leftPinky: "#8e44ad", // Royal Purple
+  leftRing: "#f39c12", // Vibrant Gold
+  leftMiddle: "#e74c3c", // Vivid Red
+  leftIndex: "#16a085", // Deep Teal
+  leftThumb: "#34495e", // Slate Blue-Gray
+  rightThumb: "#34495e", // Slate Blue-Gray
+  rightIndex: "#27ae60", // Emerald Green
+  rightMiddle: "#2980b9", // Strong Blue
+  rightRing: "#f1c40f", // Bright Yellow
+  rightPinky: "#9b59b6", // Amethyst Purple
 };
 
 export const KEYBOARD_THEMES = ENHANCED_KEYBOARD_THEMES;

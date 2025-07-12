@@ -3,7 +3,7 @@ import { Settings, StatsHistory } from "./types";
 // Default settings
 export const DEFAULT_SETTINGS: Settings = {
   soundEnabled: false,
-  keyboardTheme: "default",
+  keyboardTheme: "colorful",
   showFingerGuide: true,
   appTheme: "system",
   keyboardSize: 100,

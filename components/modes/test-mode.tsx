@@ -9,6 +9,7 @@ import { TimedTestTimer } from "./timed-test-timer";
 import { TestSettings } from "./test-settings";
 import { TestSummary } from "./test-summary";
 import { TestTextDisplay } from "./test-text-display";
+import { VirtualKeyboard } from "@/components/keyboard/virtual-keyboard";
 
 interface TestModeProps {
   testText: string;
@@ -27,6 +28,8 @@ interface TestModeProps {
   isTestComplete: boolean;
   strictMode: boolean;
   settings: Settings;
+  pressedKeys: Set<string>;
+  getKeyColor: (key: string) => string;
 }
 
 export const TestMode = ({
@@ -46,6 +49,8 @@ export const TestMode = ({
   isTestComplete,
   strictMode,
   settings,
+  pressedKeys,
+  getKeyColor,
 }: TestModeProps) => {
   const [showSummary, setShowSummary] = useState(false);
 
@@ -71,7 +76,9 @@ export const TestMode = ({
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
                 <Target className="h-5 w-5 text-blue-600" />
-                <CardTitle className="text-xl font-semibold">Typing Test</CardTitle>
+                <CardTitle className="text-xl font-semibold">
+                  Typing Test
+                </CardTitle>
               </div>
               {settings.showAdvancedSettings && (
                 <Badge variant="outline" className="text-xs">
@@ -79,7 +86,7 @@ export const TestMode = ({
                 </Badge>
               )}
             </div>
-            
+
             <div className="flex items-center gap-3">
               {/* Next key indicator */}
               <div className="flex items-center gap-2">
@@ -88,15 +95,18 @@ export const TestMode = ({
                   {nextKey || "Complete!"}
                 </Badge>
               </div>
-              
+
               {/* Strict mode indicator */}
               {strictMode && (
-                <Badge variant="outline" className="border-orange-200 text-orange-700 dark:border-orange-800 dark:text-orange-300">
+                <Badge
+                  variant="outline"
+                  className="border-orange-200 text-orange-700 dark:border-orange-800 dark:text-orange-300"
+                >
                   <Zap className="h-3 w-3 mr-1" />
                   Strict
                 </Badge>
               )}
-              
+
               {/* Reset button */}
               <Button
                 onClick={onReset}
@@ -110,6 +120,8 @@ export const TestMode = ({
             </div>
           </div>
 
+          {/* Advanced: Finger Guide Toggle */}
+          {/* (Removed, not needed for theme-based coloring) */}
           {/* Test settings and timer */}
           <div className="mt-4 space-y-3">
             <TestSettings
@@ -124,12 +136,21 @@ export const TestMode = ({
               <TimedTestTimer
                 testDuration={testDuration}
                 timeElapsed={stats.timeElapsed}
-                isActive={isTimedTest && stats.timeElapsed > 0 && !isTestComplete}
+                isActive={
+                  isTimedTest && stats.timeElapsed > 0 && !isTestComplete
+                }
               />
             )}
           </div>
         </CardHeader>
       </Card>
+
+      {/* Virtual Keyboard for finger guidance */}
+      <VirtualKeyboard
+        pressedKeys={pressedKeys}
+        getKeyColor={getKeyColor}
+        settings={settings}
+      />
 
       {/* Test Content */}
       {!isTestComplete && (

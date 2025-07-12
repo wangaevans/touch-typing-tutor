@@ -20,7 +20,7 @@ export const ENHANCED_KEYBOARD_THEMES = {
   // Fixed themes - maintain appearance regardless of app theme
   colorful: {
     name: "Colorful",
-    keyBg: "dynamic", // Uses finger colors
+    keyBg: "dynamic", // Uses finger colors via mapping in KeyboardKey
     keyText: "#1f2937",
     pressedBg: "darker",
     pressedText: "white",

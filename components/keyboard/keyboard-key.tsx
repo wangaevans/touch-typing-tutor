@@ -36,6 +36,23 @@ export const KeyboardKey = ({
       transition: "all 200ms ease",
     };
 
+    // Only use finger color if theme is 'colorful'
+    if (settings.keyboardTheme === "colorful") {
+      const fingerColor = getKeyColor(keyObj.key);
+      const lightColor = fingerColor + "80";
+      return {
+        ...baseStyle,
+        background: `linear-gradient(135deg, ${fingerColor} 60%, ${lightColor} 100%)`,
+        color: theme.keyText,
+        boxShadow: isPressed
+          ? `0 0 12px 2px ${fingerColor}99`
+          : `0 0 8px 2px ${fingerColor}55`,
+        border: `1.5px solid ${fingerColor}`,
+        filter: isPressed ? "brightness(0.95)" : "none",
+        transition: "all 200ms cubic-bezier(.4,2,.6,1)",
+      };
+    }
+
     if (settings.keyboardTheme === "colorful") {
       const fingerColor = getKeyColor(keyObj.key);
       return {

@@ -17,7 +17,7 @@ import { Header } from "@/components/layout/header";
 import { ModeSelector } from "@/components/layout/mode-selector";
 
 // Import constants
-import { FINGER_COLORS } from "@/lib/constants";
+import { FINGER_COLORS, KEY_FINGER_MAP } from "@/lib/constants";
 import { Settings as SettingsType } from "@/lib/types";
 
 const EnhancedTypingTrainer = () => {
@@ -76,8 +76,8 @@ const EnhancedTypingTrainer = () => {
   });
 
   const getKeyColor = useCallback((key: string): string => {
-    const finger = FINGER_COLORS[key as keyof typeof FINGER_COLORS];
-    return finger || "#6b7280";
+    const finger = KEY_FINGER_MAP[key];
+    return finger ? FINGER_COLORS[finger] : "#e0e0e0"; // fallback to neutral
   }, []);
 
   const handleSettingsChange = useCallback(
@@ -304,6 +304,8 @@ const EnhancedTypingTrainer = () => {
             onTestDurationChange={handleTestDurationChange}
             isTestComplete={isTestComplete}
             strictMode={settings.strictMode}
+            pressedKeys={pressedKeys}
+            getKeyColor={getKeyColor}
             settings={settings}
           />
         )}

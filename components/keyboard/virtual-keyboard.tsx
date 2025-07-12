@@ -19,12 +19,7 @@ export const VirtualKeyboard = ({
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-3">
-          <img
-            src="/tt-tutor-logo.svg"
-            alt="TT Tutor Logo"
-            className="h-5 w-auto"
-          />
-          <span>Virtual Keyboard</span>
+          Virtual Keyboard
         </CardTitle>
       </CardHeader>
       <CardContent>
