@@ -4,9 +4,7 @@ A modern, interactive typing tutor built with Next.js, React, and TypeScript. Pr
 
 ![TT-Tutor Logo](public/tt-tutor-logo.svg)
 
-[![GitHub Workflow Status](https://github.com/evans/tt-tutor/workflows/CI/badge.svg)](https://github.com/evans/tt-tutor/actions)
-[![GitHub License](https://img.shields.io/github/license/evans/tt-tutor)](https://github.com/evans/tt-tutor/blob/main/LICENSE)
-[![GitHub Stars](https://img.shields.io/github/stars/evans/tt-tutor)](https://github.com/evans/tt-tutor/stargazers)
+
 
 ## ✨ Features
 
