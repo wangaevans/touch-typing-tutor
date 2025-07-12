@@ -63,8 +63,8 @@ const EnhancedTypingTrainer = () => {
     null
   );
   const [isPracticeTyping, setIsPracticeTyping] = useState(false);
-  const [isTimedTest, setIsTimedTest] = useState(false);
-  const [testDuration, setTestDuration] = useState(10); // Default 10 seconds
+  const [isTimedTest, setIsTimedTest] = useState(true); // Default to timed test
+  const [testDuration, setTestDuration] = useState(30); // Default 30 seconds
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const practiceTextareaRef = useRef<HTMLTextAreaElement>(null);
@@ -117,7 +117,10 @@ const EnhancedTypingTrainer = () => {
   }, []);
 
   const initializeTimedTest = useCallback(() => {
-    setTestText(""); // For timed tests, we'll generate text dynamically
+    // Generate text for timed test immediately
+    const randomText =
+      TEST_TEXTS[Math.floor(Math.random() * TEST_TEXTS.length)];
+    setTestText(randomText);
     setCurrentInput("");
     setCurrentCharIndex(0);
     setIncorrectChars(new Set());
@@ -175,7 +178,7 @@ const EnhancedTypingTrainer = () => {
         ? Math.min(100, Math.round((correctChars / charactersTyped) * 100))
         : 0;
 
-    setStats({
+    const newStats = {
       wpm: wpm || 0,
       accuracy,
       errors: incorrectChars,
@@ -183,6 +186,22 @@ const EnhancedTypingTrainer = () => {
       charactersTyped,
       correctChars,
       incorrectChars,
+    };
+
+    // Only update stats if they've actually changed to prevent unnecessary re-renders
+    setStats((prevStats) => {
+      if (
+        prevStats.wpm !== newStats.wpm ||
+        prevStats.accuracy !== newStats.accuracy ||
+        prevStats.errors !== newStats.errors ||
+        prevStats.timeElapsed !== newStats.timeElapsed ||
+        prevStats.charactersTyped !== newStats.charactersTyped ||
+        prevStats.correctChars !== newStats.correctChars ||
+        prevStats.incorrectChars !== newStats.incorrectChars
+      ) {
+        return newStats;
+      }
+      return prevStats;
     });
   }, [currentInput, testText, startTime, isTimedTest, testDuration, isTyping]);
 
@@ -194,7 +213,7 @@ const EnhancedTypingTrainer = () => {
     const wpm = Math.round(charactersTyped / 5 / (timeElapsed / 60));
     const accuracy = charactersTyped > 0 ? 100 : 0; // In practice mode, all characters are considered correct
 
-    setStats({
+    const newStats = {
       wpm: wpm || 0,
       accuracy,
       errors: 0,
@@ -202,6 +221,20 @@ const EnhancedTypingTrainer = () => {
       charactersTyped,
       correctChars: charactersTyped,
       incorrectChars: 0,
+    };
+
+    // Only update stats if they've actually changed to prevent unnecessary re-renders
+    setStats((prevStats) => {
+      if (
+        prevStats.wpm !== newStats.wpm ||
+        prevStats.accuracy !== newStats.accuracy ||
+        prevStats.timeElapsed !== newStats.timeElapsed ||
+        prevStats.charactersTyped !== newStats.charactersTyped ||
+        prevStats.correctChars !== newStats.correctChars
+      ) {
+        return newStats;
+      }
+      return prevStats;
     });
   }, [practiceInput, practiceStartTime]);
 
@@ -236,13 +269,6 @@ const EnhancedTypingTrainer = () => {
     if (!isTyping && value.length > 0) {
       setIsTyping(true);
       setStartTime(Date.now());
-
-      // Generate text for timed test if not already set
-      if (!testText) {
-        const randomText =
-          TEST_TEXTS[Math.floor(Math.random() * TEST_TEXTS.length)];
-        setTestText(randomText);
-      }
     }
 
     setCurrentInput(value);
@@ -321,15 +347,19 @@ const EnhancedTypingTrainer = () => {
 
   useEffect(() => {
     if (mode === "test") {
-      initializeTest();
+      if (isTimedTest) {
+        initializeTimedTest();
+      } else {
+        initializeTest();
+      }
     } else {
       resetPractice();
     }
-  }, [initializeTest, resetPractice, mode]);
+  }, [initializeTest, initializeTimedTest, resetPractice, mode, isTimedTest]);
 
   useEffect(() => {
     if (isTyping) {
-      intervalRef.current = setInterval(calculateStats, 100);
+      intervalRef.current = setInterval(calculateStats, 250); // Reduced frequency to prevent UI shaking
     } else if (intervalRef.current) {
       clearInterval(intervalRef.current);
     }
@@ -353,7 +383,7 @@ const EnhancedTypingTrainer = () => {
 
   useEffect(() => {
     if (isPracticeTyping) {
-      practiceIntervalRef.current = setInterval(calculatePracticeStats, 100);
+      practiceIntervalRef.current = setInterval(calculatePracticeStats, 250); // Reduced frequency to prevent UI shaking
     } else if (practiceIntervalRef.current) {
       clearInterval(practiceIntervalRef.current);
     }
