@@ -9,7 +9,6 @@ import { TimedTestTimer } from "./timed-test-timer";
 import { TestSettings } from "./test-settings";
 import { TestSummary } from "./test-summary";
 import { TestTextDisplay } from "./test-text-display";
-import { VirtualKeyboard } from "@/components/keyboard/virtual-keyboard";
 
 interface TestModeProps {
   testText: string;
@@ -28,7 +27,6 @@ interface TestModeProps {
   isTestComplete: boolean;
   strictMode: boolean;
   settings: Settings;
-  pressedKeys: Set<string>;
   getKeyColor: (key: string) => string;
 }
 
@@ -49,8 +47,6 @@ export const TestMode = ({
   isTestComplete,
   strictMode,
   settings,
-  pressedKeys,
-  getKeyColor,
 }: TestModeProps) => {
   const [showSummary, setShowSummary] = useState(false);
 
@@ -120,8 +116,6 @@ export const TestMode = ({
             </div>
           </div>
 
-          {/* Advanced: Finger Guide Toggle */}
-          {/* (Removed, not needed for theme-based coloring) */}
           {/* Test settings and timer */}
           <div className="mt-4 space-y-3">
             <TestSettings
@@ -144,14 +138,6 @@ export const TestMode = ({
           </div>
         </CardHeader>
       </Card>
-
-      {/* Virtual Keyboard for finger guidance */}
-      <VirtualKeyboard
-        pressedKeys={pressedKeys}
-        getKeyColor={getKeyColor}
-        settings={settings}
-      />
-
       {/* Test Content */}
       {!isTestComplete && (
         <div className="space-y-6">

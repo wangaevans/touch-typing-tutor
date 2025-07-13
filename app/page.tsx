@@ -235,7 +235,7 @@ const EnhancedTypingTrainer = () => {
     } else if (mode === "practice" && practiceTextareaRef.current) {
       practiceTextareaRef.current.focus();
     }
-  }, [mode]);
+  }, [mode,practiceTextareaRef,textareaRef]);
 
   const nextKey = mode === "test" ? getNextKeyToPress() : null;
 
@@ -304,7 +304,6 @@ const EnhancedTypingTrainer = () => {
             onTestDurationChange={handleTestDurationChange}
             isTestComplete={isTestComplete}
             strictMode={settings.strictMode}
-            pressedKeys={pressedKeys}
             getKeyColor={getKeyColor}
             settings={settings}
           />
